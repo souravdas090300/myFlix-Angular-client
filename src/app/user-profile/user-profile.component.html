@@ -1,0 +1,73 @@
+<div class="user-profile-container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <mat-card-title>My Profile</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form class="profile-form">
+        <mat-form-field>
+          <mat-label>Username</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="user.Username" 
+            name="Username" 
+            type="text"
+            required>
+        </mat-form-field>
+        
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="user.Email" 
+            name="Email" 
+            type="email"
+            required>
+        </mat-form-field>
+        
+        <mat-form-field>
+          <mat-label>Birthday</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="user.Birthday" 
+            name="Birthday" 
+            type="date">
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+    
+    <mat-card-actions class="action-buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="updateUser()">
+        Update Profile
+      </button>
+      
+      <button 
+        mat-raised-button 
+        color="accent" 
+        (click)="logOut()">
+        Logout
+      </button>
+      
+      <button 
+        mat-raised-button 
+        color="warn" 
+        (click)="deleteUser()">
+        Delete Account
+      </button>
+    </mat-card-actions>
+  </mat-card>
+  
+  <!-- Navigation back to movies -->
+  <div class="navigation">
+    <button 
+      mat-stroked-button 
+      color="primary" 
+      routerLink="/movies">
+      ← Back to Movies
+    </button>
+  </div>
+</div>

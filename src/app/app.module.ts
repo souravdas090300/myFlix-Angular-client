@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,36 +16,37 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { UserRegistrationForm } from './user-registration-form/user-registration-form';
-import { UserLoginForm } from './user-login-form/user-login-form';
-import { WelcomePage } from './welcome-page/welcome-page';
-import { MovieCard } from './movie-card/movie-card';
-import { UserProfile } from './user-profile/user-profile';
-import { MovieDetailsDialog } from './movie-details-dialog/movie-details-dialog';
-import { GenreDialog } from './genre-dialog/genre-dialog';
-import { DirectorDialog } from './director-dialog/director-dialog';
+import { UserRegistrationFormComponent } from './user-registration-form/user-registration-form.component';
+import { UserLoginFormComponent } from './user-login-form/user-login-form.component';
+import { WelcomePageComponent } from './welcome-page/welcome-page.component';
+import { MovieCardComponent } from './movie-card/movie-card.component';
+import { GenreDialogComponent } from './genre-dialog/genre-dialog.component';
+import { DirectorDialogComponent } from './director-dialog/director-dialog.component';
+import { MovieDetailsDialogComponent } from './movie-details-dialog/movie-details-dialog.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 const appRoutes: Routes = [
-  { path: 'welcome', component: WelcomePage },
-  { path: 'movies', component: MovieCard },
-  { path: 'profile', component: UserProfile },
-  { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+  { path: 'welcome', component: WelcomePageComponent },
+  { path: 'movies', component: MovieCardComponent },
+  { path: 'profile', component: UserProfileComponent },
+  { path: '', redirectTo: 'welcome', pathMatch: 'prefix' },
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    UserRegistrationForm,
-    UserLoginForm,
-    WelcomePage,
-    MovieCard,
-    UserProfile,
-    MovieDetailsDialog,
-    GenreDialog,
-    DirectorDialog
+    UserRegistrationFormComponent,
+    UserLoginFormComponent,
+    WelcomePageComponent,
+    MovieCardComponent,
+    GenreDialogComponent,
+    DirectorDialogComponent,
+    MovieDetailsDialogComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     HttpClientModule,
     BrowserAnimationsModule,
     MatInputModule,
