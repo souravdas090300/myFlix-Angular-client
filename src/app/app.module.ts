@@ -7,18 +7,41 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule, Routes } from '@angular/router';
 
-import { AppComponent } from './app';
+import { AppComponent } from './app.component';
 import { UserRegistrationForm } from './user-registration-form/user-registration-form';
 import { UserLoginForm } from './user-login-form/user-login-form';
+import { WelcomePage } from './welcome-page/welcome-page';
+import { MovieCard } from './movie-card/movie-card';
+import { UserProfile } from './user-profile/user-profile';
+import { MovieDetailsDialog } from './movie-details-dialog/movie-details-dialog';
+import { GenreDialog } from './genre-dialog/genre-dialog';
+import { DirectorDialog } from './director-dialog/director-dialog';
+
+const appRoutes: Routes = [
+  { path: 'welcome', component: WelcomePage },
+  { path: 'movies', component: MovieCard },
+  { path: 'profile', component: UserProfile },
+  { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+];
 
 @NgModule({
   declarations: [
     AppComponent,
     UserRegistrationForm,
-    UserLoginForm
+    UserLoginForm,
+    WelcomePage,
+    MovieCard,
+    UserProfile,
+    MovieDetailsDialog,
+    GenreDialog,
+    DirectorDialog
   ],
   imports: [
     BrowserModule,
@@ -30,7 +53,11 @@ import { UserLoginForm } from './user-login-form/user-login-form';
     MatFormFieldModule,
     MatDialogModule,
     MatSnackBarModule,
-    FormsModule
+    MatIconModule,
+    MatToolbarModule,
+    MatGridListModule,
+    FormsModule,
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [],
   bootstrap: [AppComponent]

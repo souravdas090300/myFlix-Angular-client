@@ -1,0 +1,28 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-card {
+  max-width: 280px;
+  margin: 10px;
+}
+
+mat-card-image {
+  width: auto;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.movies-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  gap: 20px;
+}
+
+mat-card-content {
+  height: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
