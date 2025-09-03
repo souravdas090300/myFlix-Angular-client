@@ -1,5 +1,5 @@
 // src/app/user-registration-form/user-registration-form.component.ts
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 // You'll use this import to close the dialog on success
 import { MatDialogRef } from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './user-registration-form.component.html',
   styleUrls: ['./user-registration-form.component.scss']
 })
-export class UserRegistrationFormComponent {
+export class UserRegistrationFormComponent implements OnInit {
 
   @Input() userData = { Username: '', Password: '', Email: '', Birthday: '' };
 
@@ -24,6 +24,11 @@ export class UserRegistrationFormComponent {
     public fetchApiData: FetchApiDataService,
     public dialogRef: MatDialogRef<UserRegistrationFormComponent>,
     public snackBar: MatSnackBar) { }
+
+  ngOnInit(): void {
+    // Initialize component - can be used for any setup logic
+    console.log('UserRegistrationFormComponent initialized');
+  }
 
   // This is the function responsible for sending the form inputs to the backend
   registerUser(): void {

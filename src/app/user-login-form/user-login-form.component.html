@@ -6,21 +6,21 @@
   <mat-card-content>
     <form>
       <mat-form-field>
+        <mat-label>Username</mat-label>
         <input
           matInput
           [(ngModel)]="userData.Username"
-          placeholder="Username"
           type="text"
           name="Username"
           required
         >
       </mat-form-field>
       <mat-form-field>
+        <mat-label>Password</mat-label>
         <input
           matInput
           [(ngModel)]="userData.Password"
           type="password"
-          placeholder="Password"
           name="Password"
           required
         >

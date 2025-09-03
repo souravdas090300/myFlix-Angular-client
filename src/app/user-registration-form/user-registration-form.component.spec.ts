@@ -19,6 +19,7 @@ describe('UserRegistrationFormComponent', () => {
   });
 
   it('should have required methods', () => {
+    expect(typeof UserRegistrationFormComponent.prototype.ngOnInit).toBe('function');
     expect(typeof UserRegistrationFormComponent.prototype.registerUser).toBe('function');
   });
 });

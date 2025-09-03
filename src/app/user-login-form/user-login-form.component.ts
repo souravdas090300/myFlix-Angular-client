@@ -1,5 +1,5 @@
 // src/app/user-login-form/user-login-form.component.ts
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 // You'll use this import to close the dialog on success
 import { MatDialogRef } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ import { Router } from '@angular/router';
   templateUrl: './user-login-form.component.html',
   styleUrls: ['./user-login-form.component.scss']
 })
-export class UserLoginFormComponent {
+export class UserLoginFormComponent implements OnInit {
 
   @Input() userData = { Username: '', Password: '' };
 
@@ -28,6 +28,11 @@ export class UserLoginFormComponent {
     public dialogRef: MatDialogRef<UserLoginFormComponent>,
     public snackBar: MatSnackBar,
     public router: Router) { }
+
+  ngOnInit(): void {
+    // Initialize component - can be used for any setup logic
+    console.log('UserLoginFormComponent initialized');
+  }
 
   // This is the function responsible for sending the form inputs to the backend
   loginUser(): void {
