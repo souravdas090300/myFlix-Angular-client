@@ -1,7 +1,7 @@
 // Development environment configuration
 export const environment = {
   production: false,
-  // Use proxy during development to avoid CORS issues
-  // The proxy.conf.json maps /api to the Heroku backend
-  apiUrl: '/api/'
+  // Use local CORS proxy server for development
+  // This will proxy requests to Heroku and handle CORS properly
+  apiUrl: 'http://localhost:3001/api/'
 };

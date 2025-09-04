@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -19,7 +19,8 @@ export class MovieCardComponent implements OnInit {
     public fetchApiData: FetchApiDataService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-    public router: Router
+    public router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
 ngOnInit(): void {
@@ -36,12 +37,18 @@ getMovies(): void {
   
   this.fetchApiData.getAllMovies().subscribe({
     next: (resp: any) => {
-      // assign in next microtask to avoid ExpressionChangedAfterItHasBeenCheckedError
-      Promise.resolve().then(() => {
-        this.movies = resp;
-        console.log('Movies received:', this.movies);
-        console.log('Number of movies:', this.movies.length);
-      });
+      // Use ChangeDetectorRef to properly handle change detection
+      this.movies = resp;
+      this.cdr.detectChanges();
+      console.log('Movies received:', this.movies);
+      console.log('Number of movies:', this.movies.length);
+      
+      // Log the structure of the first movie to help debug
+      if (this.movies.length > 0) {
+        console.log('First movie structure:', this.movies[0]);
+        console.log('First movie Director:', this.movies[0].Director);
+        console.log('First movie Genre:', this.movies[0].Genre);
+      }
     },
     error: (error) => {
       console.error('Failed to load movies:', error);
@@ -64,10 +71,16 @@ getMovies(): void {
    * @param description - genre description
    */
   openGenreDialog(name: string, description: string): void {
+    // Check if we have valid genre data
+    if (!name) {
+      console.warn('Genre name is missing');
+      return;
+    }
+    
     this.dialog.open(GenreDialogComponent, {
       data: {
-        Name: name,
-        Description: description
+        Name: name || 'Unknown Genre',
+        Description: description || 'No description available.'
       },
       width: '400px'
     });
@@ -81,12 +94,18 @@ getMovies(): void {
    * @param death - director death date
    */
   openDirectorDialog(name: string, bio: string, birth?: string, death?: string): void {
+    // Check if we have valid director data
+    if (!name) {
+      console.warn('Director name is missing');
+      return;
+    }
+    
     this.dialog.open(DirectorDialogComponent, {
       data: {
-        Name: name,
-        Bio: bio,
-        Birth: birth,
-        Death: death
+        Name: name || 'Unknown Director',
+        Bio: bio || 'No biography available.',
+        Birth: birth || 'Unknown',
+        Death: death || 'N/A'
       },
       width: '500px'
     });

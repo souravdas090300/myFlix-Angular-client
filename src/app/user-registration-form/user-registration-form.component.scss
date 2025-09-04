@@ -6,9 +6,27 @@ form {
 
 mat-form-field {
   margin: 8px 0;
+  width: 100%;
+}
+
+mat-card {
+  max-width: 400px;
+  margin: 20px auto;
 }
 
 mat-card-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  padding: 16px;
+}
+
+button {
+  min-width: 120px;
+}
+
+/* Ensure labels float properly */
+.mat-mdc-form-field.mat-mdc-form-field {
+  .mat-mdc-floating-label {
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }

@@ -20,6 +20,6 @@ describe('MovieCardComponent', () => {
 
   it('should have constructor that accepts required services', () => {
     // Test that the component class structure is correct
-    expect(MovieCardComponent.length).toBe(4); // constructor expects 4 parameters: FetchApiDataService, MatDialog, MatSnackBar, Router
+    expect(MovieCardComponent.length).toBe(5); // constructor expects 5 parameters: FetchApiDataService, MatDialog, MatSnackBar, Router, ChangeDetectorRef
   });
 });

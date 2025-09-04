@@ -42,7 +42,7 @@ export class UserProfileComponent implements OnInit {
    * Update user profile
    */
   updateUser(): void {
-    this.fetchApiData.editUser(this.user.Username, this.user).subscribe((result) => {
+    this.fetchApiData.editUser(this.user).subscribe((result) => {
       console.log('User update result:', result);
       localStorage.setItem('user', JSON.stringify(result));
       this.snackBar.open('Profile updated successfully!', 'OK', {
@@ -61,7 +61,7 @@ export class UserProfileComponent implements OnInit {
    */
   deleteUser(): void {
     if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
-      this.fetchApiData.deleteUser(this.user.Username).subscribe((result) => {
+      this.fetchApiData.deleteUser().subscribe((result) => {
         console.log('User deleted:', result);
         localStorage.clear();
         this.snackBar.open('Account deleted successfully', 'OK', {
