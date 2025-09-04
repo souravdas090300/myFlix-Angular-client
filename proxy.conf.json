@@ -1,0 +1,13 @@
+{
+  "/api/*": {
+    "target": "https://movie-flix-fb6c35ebba0a.herokuapp.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/api": "" },
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "node server.js",
+    "dev": "ng serve --proxy-config proxy.conf.json",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:myFlix-Angular-client": "node dist/myFlix-Angular-client/server/server.mjs",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "heroku-postbuild": "ng build --configuration production"
   },
   "prettier": {
     "printWidth": 100,
@@ -26,8 +28,10 @@
   "dependencies": {
     "@angular/animations": "^20.2.3",
     "@angular/cdk": "^20.2.1",
+    "@angular/cli": "^20.2.1",
     "@angular/common": "^20.2.0",
     "@angular/compiler": "^20.2.0",
+    "@angular/compiler-cli": "^20.2.0",
     "@angular/core": "^20.2.0",
     "@angular/forms": "^20.2.0",
     "@angular/material": "^20.2.1",
@@ -39,12 +43,11 @@
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "typescript": "~5.9.2",
     "zone.js": "^0.15.1"
   },
   "devDependencies": {
     "@angular/build": "^20.2.1",
-    "@angular/cli": "^20.2.1",
-    "@angular/compiler-cli": "^20.2.0",
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
@@ -57,7 +60,10 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2",
     "typescript-eslint": "8.40.0"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
   }
 }

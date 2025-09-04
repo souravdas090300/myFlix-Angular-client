@@ -31,13 +31,32 @@ ngOnInit(): void {
 
 getMovies(): void {
   console.log('Calling getAllMovies...');
-  this.fetchApiData.getAllMovies().subscribe((resp: any) => {
-      this.movies = resp;
-      console.log('Movies received:', this.movies);
-      console.log('Number of movies:', this.movies.length);
-      return this.movies;
-    });
-  }
+  console.log('Current token:', localStorage.getItem('token'));
+  console.log('Current user:', localStorage.getItem('user'));
+  
+  this.fetchApiData.getAllMovies().subscribe({
+    next: (resp: any) => {
+      // assign in next microtask to avoid ExpressionChangedAfterItHasBeenCheckedError
+      Promise.resolve().then(() => {
+        this.movies = resp;
+        console.log('Movies received:', this.movies);
+        console.log('Number of movies:', this.movies.length);
+      });
+    },
+    error: (error) => {
+      console.error('Failed to load movies:', error);
+      this.snackBar.open('Failed to load movies. Please try logging in again.', 'OK', {
+        duration: 4000
+      });
+      // If we get a 401 (unauthorized), redirect to welcome page
+      if (error.status === 401) {
+        console.log('Unauthorized - redirecting to welcome page');
+        localStorage.clear();
+        this.router.navigate(['welcome']);
+      }
+    }
+  });
+}
 
   /**
    * Opens a dialog to display genre details

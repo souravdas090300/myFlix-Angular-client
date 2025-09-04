@@ -24,12 +24,13 @@ import { GenreDialogComponent } from './genre-dialog/genre-dialog.component';
 import { DirectorDialogComponent } from './director-dialog/director-dialog.component';
 import { MovieDetailsDialogComponent } from './movie-details-dialog/movie-details-dialog.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { RegistrationSuccessDialogComponent } from './registration-success-dialog/registration-success-dialog.component';
 
 const appRoutes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
   { path: 'movies', component: MovieCardComponent },
   { path: 'profile', component: UserProfileComponent },
-  { path: '', redirectTo: 'welcome', pathMatch: 'prefix' },
+  { path: '', redirectTo: 'welcome', pathMatch: 'full' }
 ];
 
 @NgModule({
@@ -54,12 +55,13 @@ const appRoutes: Routes = [
     MatCardModule,
     MatFormFieldModule,
     MatDialogModule,
+    RegistrationSuccessDialogComponent,
     MatSnackBarModule,
+    RouterModule.forRoot(appRoutes),
     MatIconModule,
     MatToolbarModule,
     MatGridListModule,
-    FormsModule,
-    RouterModule.forRoot(appRoutes)
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
