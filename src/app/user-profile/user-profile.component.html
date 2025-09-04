@@ -66,8 +66,10 @@
     <button 
       mat-stroked-button 
       color="primary" 
-      routerLink="/movies">
-      ← Back to Movies
+      (click)="backToMovies()"
+      type="button"
+      #backButton>
+      ← Back to Movies {{ clickCount > 0 ? '(' + clickCount + ')' : '' }}
     </button>
   </div>
 </div>

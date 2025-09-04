@@ -1,5 +1,5 @@
 // src/app/movie-card/movie-card.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,25 +16,62 @@ import { MovieDetailsDialogComponent } from '../movie-details-dialog/movie-detai
 })
 export class MovieCardComponent implements OnInit {
   movies: any[] = [];
+  isLoading = true;
   
   constructor(
     public fetchApiData: FetchApiDataService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-    public router: Router
+    public router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (!token || !user) {
+      this.router.navigate(['welcome']);
+      return;
+    }
+    
     this.getMovies();
   }
 
   getMovies(): void {
-    this.fetchApiData.getAllMovies().subscribe((resp: any) => {
-        this.movies = resp;
-        console.log(this.movies);
-        return this.movies;
-      });
-    }
+    console.log('Getting movies...');
+    console.log('Token:', localStorage.getItem('token'));
+    console.log('User:', localStorage.getItem('user'));
+    
+    this.isLoading = true;
+    
+    this.fetchApiData.getAllMovies().subscribe({
+      next: (resp: any) => {
+        console.log('Movies response:', resp);
+        // Use setTimeout to defer the update to the next tick
+        setTimeout(() => {
+          this.movies = resp;
+          this.isLoading = false;
+          console.log('Movies set:', this.movies);
+          this.cdr.detectChanges(); // Manually trigger change detection
+        }, 0);
+      },
+      error: (error) => {
+        console.error('Error getting movies:', error);
+        this.isLoading = false;
+        this.snackBar.open('Failed to load movies. Please try logging in again.', 'OK', {
+          duration: 4000
+        });
+        // If we get a 401 (unauthorized), redirect to welcome page
+        if (error.status === 401) {
+          console.log('Unauthorized - redirecting to welcome page');
+          localStorage.clear();
+          this.router.navigate(['welcome']);
+        }
+      }
+    });
+  }
 
   /**
    * Opens a dialog to display genre details
