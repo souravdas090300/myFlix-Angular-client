@@ -24,19 +24,63 @@ export class MovieCardComponent implements OnInit {
     public snackBar: MatSnackBar,
     public router: Router,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) { 
+    // Force reload when component is created
+    console.log('MovieCardComponent constructor called');
+  }
 
   ngOnInit(): void {
-    // Check if user is authenticated
+    console.log('=== MovieCard ngOnInit called ===');
+    console.log('Current URL:', window.location.href);
+    
+    // Force reload movies every time component initializes
+    this.forceReloadMovies();
+    
+    // Add window focus listener to reload when returning to page
+    window.addEventListener('focus', () => {
+      console.log('Window focused - checking if movies need reload');
+      if (this.movies.length === 0 || !this.movies) {
+        console.log('Movies array empty, forcing reload');
+        this.forceReloadMovies();
+      }
+    });
+    
+    // Also add visibility change listener
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        console.log('Page became visible - checking movies');
+        if (this.movies.length === 0 || !this.movies) {
+          console.log('Movies array empty, forcing reload');
+          this.forceReloadMovies();
+        }
+      }
+    });
+  }
+
+  forceReloadMovies(): void {
+    console.log('Force reloading movies...');
+    
+    // Reset state
+    this.movies = [];
+    this.isLoading = true;
+    
+    // Check authentication
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     
+    console.log('Token exists:', !!token);
+    console.log('User exists:', !!user);
+    
     if (!token || !user) {
+      console.log('No authentication found, redirecting to welcome');
       this.router.navigate(['welcome']);
       return;
     }
     
-    this.getMovies();
+    // Force a small delay then get movies
+    setTimeout(() => {
+      this.getMovies();
+    }, 100);
   }
 
   getMovies(): void {

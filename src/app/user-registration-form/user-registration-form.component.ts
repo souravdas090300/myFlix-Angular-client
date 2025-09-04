@@ -39,14 +39,45 @@ export class UserRegistrationFormComponent {
       return;
     }
 
-    // Format the data to match API expectations - try different field name casing
+    // Format the data to match API expectations - ensure all fields are strings
     const formattedUserData: any = {
       Username: this.userData.Username.trim(),
       Password: this.userData.Password,
-      Email: this.userData.Email.trim()
+      Email: this.userData.Email.trim().toLowerCase()
     };
 
-    // Only add Birthday if it's provided
+    // Only add Birthday if it's provided and format it properly
+    if (this.userData.Birthday) {
+      // Ensure birthday is in the correct format (YYYY-MM-DD)
+      const birthdayDate = new Date(this.userData.Birthday);
+      if (!isNaN(birthdayDate.getTime())) {
+        formattedUserData.Birthday = this.userData.Birthday;
+      }
+    }
+    
+    // Additional validation
+    if (formattedUserData.Username.length < 3) {
+      this.snackBar.open('Username must be at least 3 characters long', 'OK', {
+        duration: 3000
+      });
+      return;
+    }
+    
+    if (formattedUserData.Password.length < 5) {
+      this.snackBar.open('Password must be at least 5 characters long', 'OK', {
+        duration: 3000
+      });
+      return;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formattedUserData.Email)) {
+      this.snackBar.open('Please enter a valid email address', 'OK', {
+        duration: 3000
+      });
+      return;
+    }
     if (this.userData.Birthday) {
       formattedUserData.Birthday = this.userData.Birthday;
     }
@@ -65,13 +96,30 @@ export class UserRegistrationFormComponent {
       console.error('Registration error details:', error); // Better error logging
       let errorMessage = 'Registration failed. Please try again.';
       
-      // Try to extract specific error message from API response
-      if (error && error.error && typeof error.error === 'object') {
-        if (error.error.message) {
+      // Handle specific error status codes
+      if (error.status === 422) {
+        console.log('Validation error details:', error.error);
+        if (error.error && error.error.message) {
           errorMessage = error.error.message;
-        } else if (error.error.errors) {
-          errorMessage = 'Validation errors: ' + JSON.stringify(error.error.errors);
+        } else if (error.error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if (error.error && error.error.errors) {
+          // Handle validation errors array
+          const validationErrors = error.error.errors;
+          if (Array.isArray(validationErrors)) {
+            errorMessage = validationErrors.join(', ');
+          } else {
+            errorMessage = 'Validation error: ' + JSON.stringify(validationErrors);
+          }
+        } else {
+          errorMessage = 'Please check that all fields are filled correctly. Username must be unique, password at least 5 characters, and email must be valid.';
         }
+      } else if (error.status === 400) {
+        errorMessage = 'Invalid data provided. Please check your input.';
+      } else if (error.status === 409) {
+        errorMessage = 'Username or email already exists. Please choose different ones.';
+      } else if (error.status === 0) {
+        errorMessage = 'Cannot connect to server. Please check your internet connection.';
       }
       
       this.snackBar.open(errorMessage, 'OK', {

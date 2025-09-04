@@ -66,10 +66,16 @@
     <button 
       mat-stroked-button 
       color="primary" 
-      (click)="backToMovies()"
-      type="button"
-      #backButton>
-      ← Back to Movies {{ clickCount > 0 ? '(' + clickCount + ')' : '' }}
+      (click)="backToMovies()">
+      ← Back to Movies
     </button>
+    
+    <!-- Alternative simple link -->
+    <a href="/movies" 
+       mat-button 
+       color="accent"
+       style="margin-left: 10px;">
+      Movies Page
+    </a>
   </div>
 </div>

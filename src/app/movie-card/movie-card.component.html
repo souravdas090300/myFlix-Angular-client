@@ -3,6 +3,9 @@
   <div style="display: flex; justify-content: space-between; align-items: center;">
     <h2 style="margin: 0; color: white;">Movie Collection</h2>
     <div>
+      <button mat-raised-button color="primary" (click)="forceReloadMovies()" style="margin-right: 10px;">
+        Refresh Movies
+      </button>
       <button mat-raised-button color="accent" routerLink="/profile" style="margin-right: 10px;">
         My Profile
       </button>

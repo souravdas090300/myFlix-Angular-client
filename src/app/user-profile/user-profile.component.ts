@@ -13,7 +13,6 @@ export class UserProfileComponent implements OnInit {
 
   user: any = {};
   favoriteMovies: any[] = [];
-  clickCount = 0;
 
   constructor(
     public fetchApiData: FetchApiDataService,
@@ -93,31 +92,8 @@ export class UserProfileComponent implements OnInit {
    * Navigate back to movies page
    */
   backToMovies(): void {
-    this.clickCount++;
-    console.log(`backToMovies() called - button clicked! Click count: ${this.clickCount}`);
-    console.log('Current router URL:', this.router.url);
-    console.log('About to navigate to movies...');
-    
-    // Show immediate feedback
-    this.snackBar.open(`Navigating to movies... (Click ${this.clickCount})`, 'OK', {
-      duration: 1000
-    });
-    
-    this.router.navigate(['movies']).then((result) => {
-      console.log('Navigation result:', result);
-      if (result) {
-        console.log('Navigation successful!');
-      } else {
-        console.log('Navigation failed!');
-        this.snackBar.open('Navigation failed. Please try again.', 'OK', {
-          duration: 3000
-        });
-      }
-    }).catch((error) => {
-      console.error('Navigation error:', error);
-      this.snackBar.open('Error occurred during navigation.', 'OK', {
-        duration: 3000
-      });
-    });
+    console.log('Navigating back to movies...');
+    // Use window.location to force a full page reload
+    window.location.href = '/movies';
   }
 }

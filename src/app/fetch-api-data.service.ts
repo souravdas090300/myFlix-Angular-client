@@ -192,8 +192,11 @@ export class FetchApiDataService {
         `Error Status code ${error.status}, ` +
         `Error body is:`, error.error);
       console.log('Full error object:', error);
+      console.log('Error status text:', error.statusText);
+      console.log('Error message:', error.message);
     }
-    return throwError(
-      'Something bad happened; please try again later.');
+    
+    // Return the actual error object so we can access the details
+    return throwError(error);
   }
 }
