@@ -9,6 +9,8 @@
     "proxy": "node proxy-server.js",
     "dev-with-proxy": "concurrently \"npm run proxy\" \"npm run dev-app\"",
     "build": "ng build --configuration production",
+    "build-gh": "ng build --configuration production --base-href /myFlix-Angular-client/",
+    "deploy": "npm run build-gh && npx angular-cli-ghpages --dir=dist/myFlix-Angular-client/browser",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:myFlix-Angular-client": "node dist/myFlix-Angular-client/server/server.mjs",
