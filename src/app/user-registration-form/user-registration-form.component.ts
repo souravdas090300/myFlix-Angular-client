@@ -96,8 +96,10 @@ export class UserRegistrationFormComponent {
       console.error('Registration error details:', error); // Better error logging
       let errorMessage = 'Registration failed. Please try again.';
       
-      // Handle specific error status codes
-      if (error.status === 422) {
+      // Handle CORS errors specifically
+      if (error.status === 0 && error.error instanceof ProgressEvent) {
+        errorMessage = 'Connection blocked by CORS policy. Please use the local development server (localhost:8080) for full functionality. The GitHub Pages version has CORS restrictions with the Heroku API.';
+      } else if (error.status === 422) {
         console.log('Validation error details:', error.error);
         if (error.error && error.error.message) {
           errorMessage = error.error.message;
@@ -119,11 +121,11 @@ export class UserRegistrationFormComponent {
       } else if (error.status === 409) {
         errorMessage = 'Username or email already exists. Please choose different ones.';
       } else if (error.status === 0) {
-        errorMessage = 'Cannot connect to server. Please check your internet connection.';
+        errorMessage = 'Cannot connect to server. Please check your internet connection or use localhost:8080 for development.';
       }
       
       this.snackBar.open(errorMessage, 'OK', {
-        duration: 5000
+        duration: 8000
       });
     });
   }
