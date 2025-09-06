@@ -14,7 +14,6 @@ describe('UserLoginFormComponent', () => {
   });
 
   it('should have required methods', () => {
-    expect(typeof UserLoginFormComponent.prototype.ngOnInit).toBe('function');
     expect(typeof UserLoginFormComponent.prototype.loginUser).toBe('function');
   });
 });

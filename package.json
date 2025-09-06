@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node server.js",
+    "start": "ng serve --port 4200",
     "dev": "ng serve --proxy-config proxy.conf.json",
-    "dev-app": "ng serve --port 8080",
+    "dev-app": "ng serve --port 4200",
     "proxy": "node proxy-server.js",
     "dev-with-proxy": "concurrently \"npm run proxy\" \"npm run dev-app\"",
     "build": "ng build --configuration production",

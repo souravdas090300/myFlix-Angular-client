@@ -1,81 +1,236 @@
-<div class="user-profile-container">
-  <mat-card class="profile-card">
-    <mat-card-header>
-      <mat-card-title>My Profile</mat-card-title>
-    </mat-card-header>
-    
-    <mat-card-content>
-      <form class="profile-form">
-        <mat-form-field>
-          <mat-label>Username</mat-label>
-          <input 
-            matInput 
-            [(ngModel)]="user.Username" 
-            name="Username" 
-            type="text"
-            required>
-        </mat-form-field>
-        
-        <mat-form-field>
-          <mat-label>Email</mat-label>
-          <input 
-            matInput 
-            [(ngModel)]="user.Email" 
-            name="Email" 
-            type="email"
-            required>
-        </mat-form-field>
-        
-        <mat-form-field>
-          <mat-label>Birthday</mat-label>
-          <input 
-            matInput 
-            [(ngModel)]="user.Birthday" 
-            name="Birthday" 
-            type="date">
-        </mat-form-field>
-      </form>
-    </mat-card-content>
-    
-    <mat-card-actions class="action-buttons">
+<div class="profile-page">
+  <!-- Navigation toolbar -->
+  <mat-toolbar color="primary" style="position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; margin-bottom: 20px; background-color: #3f51b5; min-height: 64px; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div style="display: flex; gap: 15px; align-items: center;">
       <button 
-        mat-raised-button 
-        color="primary" 
-        (click)="updateUser()">
-        Update Profile
+        mat-button 
+        style="color: white; font-weight: bold;"
+        routerLink="/welcome">
+        <mat-icon>movie</mat-icon>
+        <span style="margin-left: 5px;" class="nav-text">myFlix</span>
       </button>
-      
       <button 
-        mat-raised-button 
-        color="accent" 
-        (click)="logOut()">
-        Logout
+        mat-button 
+        style="color: white;"
+        routerLink="/movies">
+        <mat-icon>video_library</mat-icon>
+        <span style="margin-left: 5px;" class="nav-text">Movies</span>
       </button>
-      
       <button 
-        mat-raised-button 
-        color="warn" 
-        (click)="deleteUser()">
-        Delete Account
+        mat-button 
+        style="color: white; background-color: rgba(255,255,255,0.1);"
+        routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span style="margin-left: 5px;" class="nav-text">Profile</span>
       </button>
-    </mat-card-actions>
-  </mat-card>
-  
-  <!-- Navigation back to movies -->
-  <div class="navigation">
+    </div>
     <button 
-      mat-stroked-button 
-      color="primary" 
-      (click)="backToMovies()">
-      ← Back to Movies
+      mat-button 
+      style="color: white;"
+      (click)="logOut()">
+      <mat-icon>logout</mat-icon>
+      <span style="margin-left: 5px;" class="nav-text">Logout</span>
     </button>
+  </mat-toolbar>
+
+  <!-- Profile content -->
+  <div class="user-profile-container">
+    <mat-card class="profile-card">
+      <mat-card-header class="profile-header">
+        <div mat-card-avatar class="profile-avatar">
+          <mat-icon>person</mat-icon>
+        </div>
+        <mat-card-title>My Profile</mat-card-title>
+        <mat-card-subtitle>Manage your account information</mat-card-subtitle>
+      </mat-card-header>
     
-    <!-- Alternative simple link -->
-    <a href="/movies" 
-       mat-button 
-       color="accent"
-       style="margin-left: 10px;">
-      Movies Page
-    </a>
+      <mat-card-content>
+        <!-- Loading state -->
+        <div *ngIf="isLoading" style="text-align: center; padding: 20px;">
+          <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+          <p>Loading profile...</p>
+        </div>
+
+        <!-- Debug information -->
+        <div *ngIf="!isLoading && !user" style="text-align: center; padding: 20px;">
+          <p>No user data available. Please log in first.</p>
+          <button mat-raised-button color="primary" routerLink="/welcome">Go to Login</button>
+        </div>
+
+        <!-- Display current user info -->
+        <div class="user-info-display" *ngIf="!editMode && user && !isLoading">
+          <div class="info-item">
+            <mat-icon>person</mat-icon>
+            <div class="info-content">
+              <div class="info-label">Username</div>
+              <div class="info-value">{{ user?.Username || 'Not provided' }}</div>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <mat-icon>email</mat-icon>
+            <div class="info-content">
+              <div class="info-label">Email</div>
+              <div class="info-value">{{ user?.Email || 'Not provided' }}</div>
+            </div>
+          </div>
+          
+          <div class="info-item" *ngIf="user?.Birthday">
+            <mat-icon>cake</mat-icon>
+            <div class="info-content">
+              <div class="info-label">Birthday</div>
+              <div class="info-value">{{ formatBirthday(user.Birthday) }}</div>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <mat-icon>favorite</mat-icon>
+            <div class="info-content">
+              <div class="info-label">Favorite Movies</div>
+              <div class="info-value">{{ user?.FavoriteMovies?.length || 0 }} movies</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Favorite Movies List -->
+        <div class="favorite-movies-section" *ngIf="!editMode">
+          <h3 class="section-title">
+            <mat-icon>favorite</mat-icon>
+            My Favorite Movies
+          </h3>
+          
+          <div class="favorite-movies-grid" *ngIf="favoriteMovies.length > 0">
+            <div class="favorite-movie-card" *ngFor="let movie of favoriteMovies">
+              <div class="movie-poster">
+                <img [src]="movie.ImagePath" [alt]="movie.Title" />
+              </div>
+              <div class="movie-info">
+                <h4 class="movie-title">{{ movie.Title }}</h4>
+                <p class="movie-director">{{ movie.Director?.Name }}</p>
+                <p class="movie-genre">{{ movie.Genre?.Name }}</p>
+                <div class="movie-actions">
+                  <button 
+                    mat-icon-button 
+                    color="warn"
+                    (click)="removeFromFavorites(movie._id)"
+                    matTooltip="Remove from favorites">
+                    <mat-icon>favorite</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty state -->
+          <div class="empty-favorites" *ngIf="favoriteMovies.length === 0">
+            <mat-icon class="empty-icon">movie_creation</mat-icon>
+            <h4>No favorite movies yet</h4>
+            <p>Start browsing movies and add them to your favorites!</p>
+            <button mat-raised-button color="primary" routerLink="/movies">
+              <mat-icon>movie</mat-icon>
+              Browse Movies
+            </button>
+          </div>
+        </div>
+
+        <!-- Edit form -->
+        <form class="profile-form" *ngIf="editMode && user">
+          <mat-form-field appearance="outline">
+            <mat-label>Username</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="user.Username" 
+              name="Username" 
+              type="text"
+              required>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="user.Email" 
+              name="Email" 
+              type="email"
+              required>
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Password (leave blank to keep current)</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="user.Password" 
+              name="Password" 
+              type="password">
+            <mat-icon matSuffix>lock</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Birthday</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="user.Birthday" 
+              name="Birthday" 
+              type="date">
+            <mat-icon matSuffix>cake</mat-icon>
+          </mat-form-field>
+        </form>
+      </mat-card-content>
+    
+      <mat-card-actions class="action-buttons">
+        <div class="button-group" *ngIf="!editMode">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="toggleEditMode()"
+            class="action-btn">
+            <mat-icon>edit</mat-icon>
+            Edit Profile
+          </button>
+          
+          <button 
+            mat-raised-button 
+            color="accent" 
+            routerLink="/movies"
+            class="action-btn">
+            <mat-icon>movie</mat-icon>
+            Back to Movies
+          </button>
+        </div>
+
+        <div class="button-group" *ngIf="editMode">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="updateUser()"
+            class="action-btn">
+            <mat-icon>save</mat-icon>
+            Save Changes
+          </button>
+          
+          <button 
+            mat-raised-button 
+            color="basic" 
+            (click)="cancelEdit()"
+            class="action-btn">
+            <mat-icon>cancel</mat-icon>
+            Cancel
+          </button>
+        </div>
+
+        <div class="danger-zone">
+          <button 
+            mat-stroked-button 
+            color="warn" 
+            (click)="deleteUser()"
+            class="delete-btn">
+            <mat-icon>delete</mat-icon>
+            Delete Account
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
   </div>
 </div>

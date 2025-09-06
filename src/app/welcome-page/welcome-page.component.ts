@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { UserLoginFormComponent } from '../user-login-form/user-login-form.component';
 import { UserRegistrationFormComponent } from '../user-registration-form/user-registration-form.component';
-import { MovieCardComponent } from '../movie-card/movie-card.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-welcome-page',
@@ -11,23 +11,20 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./welcome-page.component.scss']
 })
 export class WelcomePageComponent {
-  constructor(public dialog: MatDialog) { }
-  
+  constructor(public dialog: MatDialog, private router: Router) { }
   openUserRegistrationDialog(): void {
     this.dialog.open(UserRegistrationFormComponent, {
       width: '280px'
     });
   }
-
-  openUserLoginDialog(): void {
+openUserLoginDialog(): void {
     this.dialog.open(UserLoginFormComponent, {
       width: '280px'
     });
   }
-
+  
   openMoviesDialog(): void {
-    this.dialog.open(MovieCardComponent, {
-      width: '500px'
-    });
+    // Navigate to movies route instead of opening dialog
+    this.router.navigate(['/movies']);
   }
 }
