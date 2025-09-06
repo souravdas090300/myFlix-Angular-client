@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 
 // Declaring the api url that will provide data for the client app
 const baseApiUrl = 'https://movie-flix-fb6c35ebba0a.herokuapp.com/';
-const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+const corsProxy = 'https://corsproxy.io/?';
 
 @Injectable({
   providedIn: 'root'
