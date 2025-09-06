@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 
 // Declaring the api url that will provide data for the client app
 const baseApiUrl = 'https://movie-flix-fb6c35ebba0a.herokuapp.com/';
-const corsProxy = 'https://api.codetabs.com/v1/proxy?quest=';
+const corsProxy = 'https://cors-anywhere.herokuapp.com/';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class FetchApiDataService {
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
     const finalUrl = isGitHubPages 
-      ? corsProxy + encodeURIComponent(baseApiUrl + endpoint)
+      ? corsProxy + baseApiUrl + endpoint
       : baseApiUrl + endpoint;
     
     console.log('Constructing URL:', {
