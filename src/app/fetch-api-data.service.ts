@@ -4,20 +4,35 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-// Declaring the api url that will provide data for the client app
+/** Base API URL for the myFlix backend service */
 const baseApiUrl = 'https://movie-flix-fb6c35ebba0a.herokuapp.com/';
+/** CORS proxy URL for GitHub Pages deployment */
 const corsProxy = 'https://corsproxy.io/?';
 
+/**
+ * Service for handling all API calls to the myFlix backend
+ * Provides methods for user authentication, movie data retrieval, and user profile management
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class FetchApiDataService {
-  // Inject the HttpClient module to the constructor params
-  // This will provide HttpClient to the entire class, making it available via this.http
+  
+  /**
+   * Constructor - Injects HttpClient for making HTTP requests
+   * @param http - Angular HttpClient for API communication
+   */
   constructor(private http: HttpClient) {
   }
 
-  // Helper method to construct proper URL for both local and GitHub Pages
+  /**
+   * Helper method to construct proper URL for both local and GitHub Pages environments
+   * Automatically adds CORS proxy when running on GitHub Pages
+   * 
+   * @private
+   * @param endpoint - The API endpoint to append to the base URL
+   * @returns The complete URL for the API call
+   */
   private constructUrl(endpoint: string): string {
     const isGitHubPages = window.location.hostname.includes('github.io');
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -38,7 +53,13 @@ export class FetchApiDataService {
     return finalUrl;
   }
 
-  // Making the api call for the user registration endpoint
+  /**
+   * Registers a new user with the myFlix API
+   * 
+   * @param userDetails - Object containing user registration data (Username, Password, Email, Birthday)
+   * @returns Observable containing the registration response
+   * @throws Error when required fields are missing
+   */
   public userRegistration(userDetails: any): Observable<any> {
     console.log('User registration called with:', userDetails);
     
@@ -59,7 +80,12 @@ export class FetchApiDataService {
     );
   }
 
-  // Making the api call for the user login endpoint
+  /**
+   * Authenticates a user with the myFlix API
+   * 
+   * @param userDetails - Object containing login credentials (Username, Password)
+   * @returns Observable containing the login response with user data and JWT token
+   */
   public userLogin(userDetails: any): Observable<any> {
     console.log(userDetails);
     const headers = new HttpHeaders({
@@ -70,7 +96,12 @@ export class FetchApiDataService {
     );
   }
 
-  // Making the api call for the get all movies endpoint
+  /**
+   * Retrieves all movies from the myFlix API
+   * Requires user authentication via JWT token stored in localStorage
+   * 
+   * @returns Observable containing an array of all movie objects
+   */
   public getAllMovies(): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http.get(this.constructUrl('movies'), {
@@ -84,7 +115,12 @@ export class FetchApiDataService {
     );
   }
 
-  // Making the api call for the get one movie endpoint
+  /**
+   * Retrieves detailed information about a specific movie
+   * 
+   * @param title - The title of the movie to retrieve
+   * @returns Observable containing the movie object with detailed information
+   */
   public getOneMovie(title: string): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http.get(this.constructUrl('movies/' + title), {
