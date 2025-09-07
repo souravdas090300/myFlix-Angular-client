@@ -6,16 +6,16 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   standalone: false,
   template: `
     <div class="movie-details-dialog">
-      <h2 mat-dialog-title>{{ data.Title }}</h2>
+      <h2 mat-dialog-title>{{ data?.Title || 'Movie Details' }}</h2>
       <mat-dialog-content>
         <div class="movie-content">
-          <img [src]="data.ImagePath" [alt]="data.Title" class="movie-image" />
+          <img [src]="data?.ImagePath" [alt]="data?.Title" class="movie-image" *ngIf="data?.ImagePath" />
           <div class="movie-info">
             <p><strong>Description:</strong></p>
-            <p>{{ data.Description }}</p>
-            <p><strong>Genre:</strong> {{ data.Genre.Name }}</p>
-            <p><strong>Director:</strong> {{ data.Director.Name }}</p>
-            <p *ngIf="data.Featured"><strong>Featured Movie</strong></p>
+            <p>{{ data?.Description || 'No description available.' }}</p>
+            <p><strong>Genre:</strong> {{ data?.Genre?.Name || 'Unknown' }}</p>
+            <p><strong>Director:</strong> {{ data?.Director?.Name || 'Unknown' }}</p>
+            <p *ngIf="data?.Featured"><strong>Featured Movie</strong></p>
           </div>
         </div>
       </mat-dialog-content>
@@ -47,7 +47,6 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     }
     @media (max-width: 600px) {
       .movie-content {
-        flex-direction: column;
       }
       .movie-image {
         width: 100%;
@@ -59,5 +58,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class MovieDetailsDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) {
+    console.log('Movie details dialog data:', data);
+  }
 }

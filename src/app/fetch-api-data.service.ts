@@ -40,11 +40,21 @@ export class FetchApiDataService {
 
   // Making the api call for the user registration endpoint
   public userRegistration(userDetails: any): Observable<any> {
-    console.log(userDetails);
+    console.log('User registration called with:', userDetails);
+    
+    // Validate required fields
+    if (!userDetails.Username || !userDetails.Password || !userDetails.Email) {
+      throw new Error('Missing required fields: Username, Password, and Email are required');
+    }
+    
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-    return this.http.post(this.constructUrl('users'), userDetails, { headers }).pipe(
+    
+    const url = this.constructUrl('users');
+    console.log('Making registration request to:', url);
+    
+    return this.http.post(url, userDetails, { headers }).pipe(
       catchError(this.handleError)
     );
   }

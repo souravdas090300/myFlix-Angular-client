@@ -10,12 +10,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./user-profile.component.scss']
 })
 export class UserProfileComponent implements OnInit {
-
   user: any = {};
-  originalUser: any = {}; // Store original user data for cancel functionality
+  originalUser: any = {};
   favoriteMovies: any[] = [];
-  editMode = false; // Toggle between view and edit mode
-  isLoading = true; // Add loading state
+  editMode = false;
+  isLoading = true;
 
   constructor(
     public fetchApiData: FetchApiDataService,
@@ -24,26 +23,18 @@ export class UserProfileComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('UserProfileComponent initialized');
     this.getUser();
-    this.getFavoriteMovies();
   }
 
-  /**
-   * Get user information from localStorage
-   */
   getUser(): void {
     const user = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    console.log('User from localStorage:', user);
-    console.log('Token from localStorage:', token);
     
     if (user && token) {
       try {
         this.user = JSON.parse(user);
-        this.originalUser = { ...this.user }; // Store original data
-        console.log('Parsed user data:', this.user);
-        this.isLoading = false;
+        this.originalUser = { ...this.user };
+        this.getFavoriteMovies();
       } catch (error) {
         console.error('Error parsing user data:', error);
         localStorage.removeItem('user');
@@ -51,8 +42,6 @@ export class UserProfileComponent implements OnInit {
         this.router.navigate(['/welcome']);
       }
     } else {
-      console.log('No user data or token found, redirecting to welcome');
-      // If no user data, redirect to welcome page
       this.snackBar.open('Please log in to view your profile', 'OK', {
         duration: 3000
       });
@@ -60,110 +49,98 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  /**
-   * Get user's favorite movies with full movie details
-   */
   getFavoriteMovies(): void {
     if (this.user.FavoriteMovies && this.user.FavoriteMovies.length > 0) {
-      this.fetchApiData.getAllMovies().subscribe((allMovies: any) => {
-        this.favoriteMovies = allMovies.filter((movie: any) => 
-          this.user.FavoriteMovies.includes(movie._id)
-        );
-        console.log('Favorite movies:', this.favoriteMovies);
-      }, (error: any) => {
-        console.log('Error fetching movies:', error);
-      });
+      this.fetchApiData.getAllMovies().subscribe(
+        (allMovies: any) => {
+          this.favoriteMovies = allMovies.filter((movie: any) => 
+            this.user.FavoriteMovies.includes(movie._id)
+          );
+          this.isLoading = false;
+        }, 
+        (error: any) => {
+          console.error('Error fetching movies:', error);
+          this.isLoading = false;
+          this.snackBar.open('Error loading favorite movies', 'OK', {
+            duration: 3000
+          });
+        }
+      );
     } else {
       this.favoriteMovies = [];
+      this.isLoading = false;
     }
   }
 
-  /**
-   * Update user profile
-   */
   updateUser(): void {
-    this.fetchApiData.editUser(this.user).subscribe((result) => {
-      console.log('User update result:', result);
-      localStorage.setItem('user', JSON.stringify(result));
-      this.user = result; // Update local user data
-      this.editMode = false; // Exit edit mode
-      this.snackBar.open('Profile updated successfully!', 'OK', {
-        duration: 2000
+    if (!this.user.Username || !this.user.Email) {
+      this.snackBar.open('Username and Email are required', 'OK', {
+        duration: 3000
       });
-    }, (error) => {
-      console.log('Error updating user:', error);
-      this.snackBar.open('Failed to update profile', 'OK', {
-        duration: 2000
-      });
-    });
+      return;
+    }
+
+    this.fetchApiData.editUser(this.user).subscribe(
+      (result) => {
+        localStorage.setItem('user', JSON.stringify(result));
+        this.user = result;
+        this.originalUser = { ...result };
+        this.editMode = false;
+        this.snackBar.open('Profile updated successfully!', 'OK', {
+          duration: 2000
+        });
+      }, 
+      (error) => {
+        console.error('Error updating user:', error);
+        const errorMessage = error.error?.message || 'Failed to update profile';
+        this.snackBar.open(errorMessage, 'OK', {
+          duration: 3000
+        });
+      }
+    );
   }
 
-  /**
-   * Delete user account
-   */
   deleteUser(): void {
-    if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
-      this.fetchApiData.deleteUser().subscribe((result) => {
-        console.log('User deleted:', result);
-        localStorage.clear();
-        this.snackBar.open('Account deleted successfully', 'OK', {
-          duration: 2000
-        });
-        this.router.navigate(['welcome']);
-      }, (error) => {
-        console.log('Error deleting user:', error);
-        this.snackBar.open('Failed to delete account', 'OK', {
-          duration: 2000
-        });
-      });
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      this.fetchApiData.deleteUser().subscribe(
+        () => {
+          localStorage.clear();
+          this.snackBar.open('Account deleted successfully', 'OK', {
+            duration: 3000
+          });
+          this.router.navigate(['/welcome']);
+        }, 
+        (error) => {
+          console.error('Error deleting user:', error);
+          const errorMessage = error.error?.message || 'Failed to delete account';
+          this.snackBar.open(errorMessage, 'OK', {
+            duration: 3000
+          });
+        }
+      );
     }
   }
 
-  /**
-   * Logout user
-   */
-  logOut(): void {
-    console.log('🚪 Logging out from profile...');
-    localStorage.clear(); // Clear all localStorage data
-    this.snackBar.open('Logged out successfully', 'OK', {
-      duration: 2000
-    });
-    // Force navigation to welcome page
-    this.router.navigate(['/welcome']).then(() => {
-      console.log('Navigation to welcome page completed from profile');
-    }).catch((error) => {
-      console.error('Navigation error from profile:', error);
-      // Force reload to welcome page as fallback
-      window.location.href = '/myFlix-Angular-client/welcome';
-    });
+  logout(): void {
+    if (confirm('Are you sure you want to log out?')) {
+      localStorage.clear();
+      this.snackBar.open('Logged out successfully', 'OK', {
+        duration: 2000
+      });
+      this.router.navigate(['/welcome'], { replaceUrl: true });
+    }
   }
 
-  /**
-   * Navigate back to movies page
-   */
-  backToMovies(): void {
-    this.router.navigate(['movies']);
-  }
-
-  /**
-   * Toggle edit mode
-   */
   toggleEditMode(): void {
     this.editMode = true;
-    this.originalUser = { ...this.user }; // Store original data for cancel
+    this.originalUser = { ...this.user };
   }
 
-  /**
-   * Cancel edit mode and restore original data
-   */
   cancelEdit(): void {
     this.editMode = false;
-    this.user = { ...this.originalUser }; // Restore original data
+    this.user = { ...this.originalUser };
   }
 
-  /**
-   * Format birthday date for display
-   */
   formatBirthday(birthday: string): string {
     if (!birthday) return 'Not provided';
     
@@ -179,27 +156,27 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  /**
-   * Remove movie from favorites
-   */
   removeFromFavorites(movieId: string): void {
-    this.fetchApiData.deleteFavouriteMovie(movieId).subscribe((result: any) => {
-      console.log('Movie removed from favorites:', result);
-      // Update local user data
-      if (this.user.FavoriteMovies) {
-        this.user.FavoriteMovies = this.user.FavoriteMovies.filter((id: string) => id !== movieId);
-        localStorage.setItem('user', JSON.stringify(this.user));
-      }
-      // Refresh favorite movies list
-      this.getFavoriteMovies();
-      this.snackBar.open('Movie removed from favorites!', 'OK', {
-        duration: 2000
-      });
-    }, (error: any) => {
-      console.log('Error removing from favorites:', error);
-      this.snackBar.open('Failed to remove movie from favorites', 'OK', {
-        duration: 2000
-      });
-    });
+    if (confirm('Are you sure you want to remove this movie from your favorites?')) {
+      this.fetchApiData.deleteFavouriteMovie(movieId).subscribe(
+        () => {
+          if (this.user.FavoriteMovies) {
+            this.user.FavoriteMovies = this.user.FavoriteMovies.filter((id: string) => id !== movieId);
+            localStorage.setItem('user', JSON.stringify(this.user));
+          }
+          this.getFavoriteMovies();
+          this.snackBar.open('Movie removed from favorites!', 'OK', {
+            duration: 2000
+          });
+        }, 
+        (error: any) => {
+          console.error('Error removing from favorites:', error);
+          const errorMessage = error.error?.message || 'Failed to remove movie from favorites';
+          this.snackBar.open(errorMessage, 'OK', {
+            duration: 3000
+          });
+        }
+      );
+    }
   }
 }

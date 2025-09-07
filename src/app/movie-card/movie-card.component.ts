@@ -1,4 +1,3 @@
-// src/app/movie-card/movie-card.component.ts
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -26,45 +25,45 @@ export class MovieCardComponent implements OnInit {
     public dialog: MatDialog
   ) { }
 
-ngOnInit(): void {
-  this.getMovies();
-}
+  ngOnInit(): void {
+    this.getMovies();
+  }
 
-getMovies(): void {
-  // Check if user has a token (is logged in)
-  const token = localStorage.getItem('token');
-  if (!token) {
-    this.isLoading = false;
-    setTimeout(() => {
+  getMovies(): void {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.isLoading = false;
       this.snackBar.open('Please log in to view movies', 'OK', {
         duration: 3000
       });
-      this.cdr.detectChanges();
-    }, 0);
-    return;
-  }
+      this.router.navigate(['/welcome']);
+      return;
+    }
 
-  this.fetchApiData.getAllMovies().subscribe((resp: any) => {
-      this.movies = resp;
-      this.isLoading = false;
-      console.log('Movies loaded from Heroku:', this.movies);
-      setTimeout(() => {
+    this.fetchApiData.getAllMovies().subscribe(
+      (resp: any) => {
+        this.movies = resp;
+        this.isLoading = false;
         this.cdr.detectChanges();
-      }, 0);
-    }, (error) => {
-      console.error('Error fetching movies from Heroku:', error);
-      this.isLoading = false;
-      setTimeout(() => {
-        this.snackBar.open('Failed to load movies from Heroku server. Please check your connection.', 'OK', {
+      }, 
+      (error) => {
+        console.error('Error fetching movies:', error);
+        this.isLoading = false;
+        this.snackBar.open('Failed to load movies. Please check your connection.', 'OK', {
           duration: 4000
         });
         this.cdr.detectChanges();
-      }, 0);
-    });
+      }
+    );
   }
 
-  // Dialog methods for movie information
   openGenreDialog(genre: any): void {
+    if (!genre || !genre.Name) {
+      this.snackBar.open('Genre information not available', 'OK', { 
+        duration: 2000 
+      });
+      return;
+    }
     this.dialog.open(GenreDialogComponent, {
       data: genre,
       width: '400px'
@@ -72,6 +71,12 @@ getMovies(): void {
   }
 
   openDirectorDialog(director: any): void {
+    if (!director || !director.Name) {
+      this.snackBar.open('Director information not available', 'OK', { 
+        duration: 2000 
+      });
+      return;
+    }
     this.dialog.open(DirectorDialogComponent, {
       data: director,
       width: '500px'
@@ -79,61 +84,64 @@ getMovies(): void {
   }
 
   openSynopsisDialog(movie: any): void {
+    if (!movie) {
+      this.snackBar.open('Movie details not available', 'OK', { 
+        duration: 2000 
+      });
+      return;
+    }
     this.dialog.open(MovieDetailsDialogComponent, {
       data: movie,
       width: '600px'
     });
   }
 
-  // Toggle favorite status
   toggleFavorite(movie: any): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isFavorite = user.FavoriteMovies?.includes(movie._id);
     
     if (isFavorite) {
-      this.fetchApiData.deleteFavouriteMovie(movie._id).subscribe(() => {
-        this.snackBar.open('Removed from favorites', 'OK', { duration: 2000 });
-        // Update local user data
-        user.FavoriteMovies = user.FavoriteMovies.filter((id: string) => id !== movie._id);
-        localStorage.setItem('user', JSON.stringify(user));
-      }, (error: any) => {
-        console.error('Error removing favorite:', error);
-        this.snackBar.open('Failed to remove from favorites', 'OK', { duration: 2000 });
-      });
+      this.fetchApiData.deleteFavouriteMovie(movie._id).subscribe(
+        () => {
+          this.snackBar.open('Removed from favorites', 'OK', { duration: 2000 });
+          user.FavoriteMovies = user.FavoriteMovies.filter((id: string) => id !== movie._id);
+          localStorage.setItem('user', JSON.stringify(user));
+          this.cdr.detectChanges();
+        }, 
+        (error: any) => {
+          console.error('Error removing favorite:', error);
+          this.snackBar.open('Failed to remove from favorites', 'OK', { duration: 2000 });
+        }
+      );
     } else {
-      this.fetchApiData.addFavouriteMovie(movie._id).subscribe(() => {
-        this.snackBar.open('Added to favorites', 'OK', { duration: 2000 });
-        // Update local user data
-        if (!user.FavoriteMovies) user.FavoriteMovies = [];
-        user.FavoriteMovies.push(movie._id);
-        localStorage.setItem('user', JSON.stringify(user));
-      }, (error: any) => {
-        console.error('Error adding favorite:', error);
-        this.snackBar.open('Failed to add to favorites', 'OK', { duration: 2000 });
-      });
+      this.fetchApiData.addFavouriteMovie(movie._id).subscribe(
+        () => {
+          this.snackBar.open('Added to favorites', 'OK', { duration: 2000 });
+          if (!user.FavoriteMovies) user.FavoriteMovies = [];
+          user.FavoriteMovies.push(movie._id);
+          localStorage.setItem('user', JSON.stringify(user));
+          this.cdr.detectChanges();
+        }, 
+        (error: any) => {
+          console.error('Error adding favorite:', error);
+          this.snackBar.open('Failed to add to favorites', 'OK', { duration: 2000 });
+        }
+      );
     }
   }
 
-  // Check if movie is favorite
   isFavorite(movieId: string): boolean {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     return user.FavoriteMovies?.includes(movieId) || false;
   }
 
-  // Navigation method for logout only (other navigation uses routerLink)
   logout(): void {
-    console.log('🚪 Logging out...');
-    localStorage.clear(); // Clear all localStorage data
-    this.snackBar.open('Logged out successfully', 'OK', {
-      duration: 2000
-    });
-    // Force navigation to welcome page
-    this.router.navigate(['/welcome']).then(() => {
-      console.log('Navigation to welcome page completed');
-    }).catch((error) => {
-      console.error('Navigation error:', error);
-      // Force reload to welcome page as fallback
-      window.location.href = '/myFlix-Angular-client/welcome';
-    });
+    if (confirm('Are you sure you want to log out?')) {
+      localStorage.clear();
+      this.snackBar.open('Logged out successfully', 'OK', {
+        duration: 2000
+      });
+      this.router.navigate(['/welcome'], { replaceUrl: true });
+    }
   }
 }

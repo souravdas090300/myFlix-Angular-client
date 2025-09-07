@@ -19,6 +19,7 @@
           "options": {
             "outputPath": "dist/myFlix-Angular-client",
             "browser": "src/main.ts",
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [

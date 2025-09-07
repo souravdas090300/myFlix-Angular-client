@@ -6,9 +6,9 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   standalone: false,
   template: `
     <div class="genre-dialog">
-      <h2 mat-dialog-title>{{ data.Name }}</h2>
+      <h2 mat-dialog-title>{{ data?.Name || 'Genre Information' }}</h2>
       <mat-dialog-content>
-        <p>{{ data.Description }}</p>
+        <p>{{ data?.Description || 'No description available.' }}</p>
       </mat-dialog-content>
       <mat-dialog-actions>
         <button mat-button mat-dialog-close>Close</button>
@@ -27,5 +27,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class GenreDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) {
+    console.log('Genre dialog data:', data);
+  }
 }
