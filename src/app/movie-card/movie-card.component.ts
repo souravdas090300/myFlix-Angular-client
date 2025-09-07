@@ -127,6 +127,13 @@ getMovies(): void {
     this.snackBar.open('Logged out successfully', 'OK', {
       duration: 2000
     });
-    this.router.navigate(['/welcome']);
+    // Force navigation to welcome page
+    this.router.navigate(['/welcome']).then(() => {
+      console.log('Navigation to welcome page completed');
+    }).catch((error) => {
+      console.error('Navigation error:', error);
+      // Force reload to welcome page as fallback
+      window.location.href = '/myFlix-Angular-client/welcome';
+    });
   }
 }

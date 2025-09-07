@@ -128,7 +128,14 @@ export class UserProfileComponent implements OnInit {
     this.snackBar.open('Logged out successfully', 'OK', {
       duration: 2000
     });
-    this.router.navigate(['/welcome']);
+    // Force navigation to welcome page
+    this.router.navigate(['/welcome']).then(() => {
+      console.log('Navigation to welcome page completed from profile');
+    }).catch((error) => {
+      console.error('Navigation error from profile:', error);
+      // Force reload to welcome page as fallback
+      window.location.href = '/myFlix-Angular-client/welcome';
+    });
   }
 
   /**
