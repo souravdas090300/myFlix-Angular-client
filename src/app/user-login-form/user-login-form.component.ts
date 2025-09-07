@@ -13,6 +13,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 // This import is used for navigation after login
 import { Router } from '@angular/router';
 
+/**
+ * User login form component displayed as a modal dialog
+ * Handles user authentication and navigation to the movie list upon successful login
+ * Stores JWT token and user data in localStorage for session management
+ */
 @Component({
   selector: 'app-user-login-form',
   standalone: false,
@@ -21,15 +26,27 @@ import { Router } from '@angular/router';
 })
 export class UserLoginFormComponent {
 
+  /** User input data binding for the login form (Username and Password) */
   @Input() userData = { Username: '', Password: '' };
 
+  /**
+   * Constructor for UserLoginFormComponent
+   * @param fetchApiData - Service for making API calls to the backend
+   * @param dialogRef - Reference to the dialog for closing after successful login
+   * @param snackBar - Material snackbar service for displaying user notifications
+   * @param router - Angular router service for navigation after login
+   */
   constructor(
     public fetchApiData: FetchApiDataService,
     public dialogRef: MatDialogRef<UserLoginFormComponent>,
     public snackBar: MatSnackBar,
     public router: Router) { }
 
-  // This is the function responsible for sending the form inputs to the backend
+  /**
+   * Handles user login authentication
+   * Stores JWT token and user data in localStorage upon successful login
+   * Navigates to movies page and closes the dialog
+   */
   loginUser(): void {
     this.fetchApiData.userLogin(this.userData).subscribe((result) => {
       // Logic for a successful user login goes here! (To be implemented)

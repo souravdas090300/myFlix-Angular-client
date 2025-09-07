@@ -7,6 +7,10 @@ import { GenreDialogComponent } from '../genre-dialog/genre-dialog.component';
 import { DirectorDialogComponent } from '../director-dialog/director-dialog.component';
 import { MovieDetailsDialogComponent } from '../movie-details-dialog/movie-details-dialog.component';
 
+/**
+ * Component responsible for displaying movie cards in a grid layout
+ * Provides functionality to view movie details, genres, directors, and manage favorites
+ */
 @Component({
   selector: 'app-movie-card',
   standalone: false,
@@ -14,9 +18,20 @@ import { MovieDetailsDialogComponent } from '../movie-details-dialog/movie-detai
   styleUrls: ['./movie-card.component.scss']
 })
 export class MovieCardComponent implements OnInit {
+  /** Array containing all movie objects retrieved from the API */
   movies: any[] = [];
+  /** Loading state indicator for displaying loading spinner */
   isLoading = true;
   
+  /**
+   * Constructor - Injects required services for movie card functionality
+   * 
+   * @param fetchApiData - Service for API communication
+   * @param snackBar - Material Design snackbar for user notifications
+   * @param cdr - Change detector for manual change detection
+   * @param router - Angular router for navigation
+   * @param dialog - Material Design dialog service for modals
+   */
   constructor(
     public fetchApiData: FetchApiDataService,
     public snackBar: MatSnackBar,
@@ -25,10 +40,17 @@ export class MovieCardComponent implements OnInit {
     public dialog: MatDialog
   ) { }
 
+  /**
+   * Angular lifecycle hook - initializes component by fetching movies
+   */
   ngOnInit(): void {
     this.getMovies();
   }
 
+  /**
+   * Retrieves all movies from the API and updates the component state
+   * Handles authentication check and error scenarios
+   */
   getMovies(): void {
     const token = localStorage.getItem('token');
     if (!token) {

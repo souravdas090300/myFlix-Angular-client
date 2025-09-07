@@ -10,7 +10,11 @@ import { FetchApiDataService } from '../fetch-api-data.service';
 // This import is used to display notifications back to the user
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-
+/**
+ * User registration form component displayed as a modal dialog
+ * Handles user input validation and registration API calls
+ * Features form validation, error handling, and user feedback
+ */
 @Component({
   selector: 'app-user-registration-form',
   standalone: false,
@@ -19,14 +23,25 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class UserRegistrationFormComponent {
 
+  /** User input data binding for the registration form */
   @Input() userData = { Username: '', Password: '', Email: '', Birthday: '' };
 
+/**
+ * Constructor for UserRegistrationFormComponent
+ * @param fetchApiData - Service for making API calls to the backend
+ * @param dialogRef - Reference to the dialog for closing after successful registration
+ * @param snackBar - Material snackbar service for displaying user notifications
+ */
 constructor(
     public fetchApiData: FetchApiDataService,
     public dialogRef: MatDialogRef<UserRegistrationFormComponent>,
     public snackBar: MatSnackBar) { }
 
-// This is the function responsible for sending the form inputs to the backend
+/**
+ * Handles user registration with form validation and API call
+ * Validates required fields and email format before submitting
+ * Displays success/error messages and closes dialog on success
+ */
 registerUser(): void {
     // Basic validation
     if (!this.userData.Username || !this.userData.Password || !this.userData.Email) {
