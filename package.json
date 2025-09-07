@@ -15,7 +15,9 @@
     "test": "ng test",
     "serve:ssr:myFlix-Angular-client": "node dist/myFlix-Angular-client/server/server.mjs",
     "lint": "ng lint",
-    "heroku-postbuild": "ng build --configuration production"
+    "heroku-postbuild": "ng build --configuration production",
+    "docs": "typedoc",
+    "docs:serve": "npx http-server docs -p 3001 -o"
   },
   "prettier": {
     "printWidth": 100,
