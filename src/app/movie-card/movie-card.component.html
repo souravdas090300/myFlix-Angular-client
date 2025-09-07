@@ -57,23 +57,31 @@
                 <button
                     mat-button
                     color="primary"
+                    (click)="openGenreDialog(movie.Genre)"
                 >
                     Genre
                 </button>
                 <button
                     mat-button
                     color="primary"
+                    (click)="openDirectorDialog(movie.Director)"
                 >
                     Director
                 </button>
                 <button
                     mat-button
                     color="primary"
+                    (click)="openSynopsisDialog(movie)"
                 >
                     Synopsis
                 </button>
               </div>
-              <mat-icon style="cursor: pointer;">favorite_border</mat-icon>
+              <mat-icon 
+                style="cursor: pointer;" 
+                [style.color]="isFavorite(movie._id) ? '#e91e63' : '#757575'"
+                (click)="toggleFavorite(movie)">
+                {{ isFavorite(movie._id) ? 'favorite' : 'favorite_border' }}
+              </mat-icon>
           </mat-card-actions>
       </mat-card>
     </div>

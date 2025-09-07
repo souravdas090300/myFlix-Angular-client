@@ -40,8 +40,10 @@ export class UserLoginFormComponent {
         duration: 2000
       });
       this.router.navigate(['movies']);
-    }, (result) => {
-      this.snackBar.open(result, 'OK', {
+    }, (error) => {
+      console.error('Login error:', error);
+      const errorMessage = error.error?.message || error.message || 'Login failed. Please check your credentials.';
+      this.snackBar.open(errorMessage, 'OK', {
         duration: 2000
       });
     });

@@ -28,14 +28,16 @@ constructor(
 
 // This is the function responsible for sending the form inputs to the backend
 registerUser(): void {
-    this.fetchApiData.userRegistration(this.userData).subscribe((result) => {
+    this.fetchApiData.userRegistration(this.userData).subscribe(() => {
   // Logic for a successful user registration goes here! (To be implemented)
      this.dialogRef.close(); // This will close the modal on success!
-     this.snackBar.open(result, 'OK', {
+     this.snackBar.open('User registration successful! You can now log in.', 'OK', {
         duration: 2000
      });
-    }, (result) => {
-      this.snackBar.open(result, 'OK', {
+    }, (error) => {
+      console.error('Registration error:', error);
+      const errorMessage = error.error?.message || error.message || 'Registration failed. Please try again.';
+      this.snackBar.open(errorMessage, 'OK', {
         duration: 2000
       });
     });
