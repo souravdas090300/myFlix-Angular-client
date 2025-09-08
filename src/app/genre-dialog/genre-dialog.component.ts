@@ -1,6 +1,22 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+/**
+ * Genre Dialog Component for displaying movie genre information
+ * 
+ * This component renders a modal dialog that displays detailed information
+ * about a movie genre, including the genre name and description.
+ * The dialog is opened from the movie card component when a user clicks
+ * on a genre button.
+ * 
+ * @example
+ * ```typescript
+ * this.dialog.open(GenreDialogComponent, {
+ *   data: { Name: 'Action', Description: 'High-energy films...' },
+ *   width: '400px'
+ * });
+ * ```
+ */
 @Component({
   selector: 'app-genre-dialog',
   standalone: false,
@@ -25,6 +41,11 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   `]
 })
 export class GenreDialogComponent {
+  /**
+   * Constructor for GenreDialogComponent
+   * 
+   * @param data - Genre data injected from the parent component containing Name and Description
+   */
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
