@@ -28,7 +28,7 @@ describe('UserProfileComponent', () => {
 
   describe('getUser', () => {
     it('should set user data when valid user exists in localStorage', () => {
-      const userData = { Username: 'testuser', Email: 'test@example.com' };
+      const userData = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01' };
       spyOn(localStorage, 'getItem').and.callFake((key: string) => {
         return key === 'user' ? JSON.stringify(userData) : 'token123';
       });
@@ -37,6 +37,12 @@ describe('UserProfileComponent', () => {
       
       expect(component.user).toEqual(userData);
       expect(component.originalUser).toEqual(userData);
+      expect(component.editedUser).toEqual({
+        Username: 'testuser',
+        Email: 'test@example.com', 
+        Birthday: '1990-01-01',
+        Password: ''
+      });
     });
 
     it('should redirect to welcome when no user data exists', () => {
@@ -51,7 +57,7 @@ describe('UserProfileComponent', () => {
 
   describe('updateUser', () => {
     it('should show error when username or email is missing', () => {
-      component.user = { Username: '', Email: '' };
+      component.editedUser = { Username: '', Email: '', Birthday: '', Password: '' };
       
       component.updateUser();
       
@@ -60,15 +66,18 @@ describe('UserProfileComponent', () => {
     });
 
     it('should call API and update user when form is valid', () => {
-      const userData = { Username: 'testuser', Email: 'test@example.com' };
-      component.user = userData;
+      const editedUserData = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01', Password: '' };
+      const expectedPayload = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01' };
+      const responseData = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01' };
+      
+      component.editedUser = editedUserData;
       mockFetchApiData.editUser.and.returnValue({
-        subscribe: (successCallback: any) => successCallback(userData)
+        subscribe: (successCallback: any) => successCallback(responseData)
       });
       
       component.updateUser();
       
-      expect(mockFetchApiData.editUser).toHaveBeenCalledWith(userData);
+      expect(mockFetchApiData.editUser).toHaveBeenCalledWith(expectedPayload);
       expect(mockSnackBar.open).toHaveBeenCalledWith('Profile updated successfully!', 'OK', jasmine.any(Object));
     });
   });

@@ -6,6 +6,10 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+// Import Material fonts and icons
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
 html {
   @include mat.theme((
     color: (
@@ -33,7 +37,7 @@ body {
   // Reset the user agent margin.
   margin: 0;
   height: 100%;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Roboto', "Helvetica Neue", sans-serif;
 }
 
 /* You can add global styles to this file, and also import other style files */
@@ -44,6 +48,40 @@ html, body {
 
 * {
   box-sizing: border-box;
+}
+
+// Ensure Material Icons display properly
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+// Global styles to prevent content clipping in movie cards
+mat-card {
+  overflow: visible !important;
+  
+  mat-card-content,
+  mat-card-actions {
+    overflow: visible !important;
+  }
+}
+
+// Ensure favorite icons are never clipped
+.favorite-icon {
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 10 !important;
 }
 
 .spacer {

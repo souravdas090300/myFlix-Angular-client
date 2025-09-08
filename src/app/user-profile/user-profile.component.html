@@ -123,33 +123,34 @@
             <mat-label>Username</mat-label>
             <input 
               matInput 
-              [(ngModel)]="user.Username" 
+              [(ngModel)]="editedUser.Username" 
               name="Username" 
               type="text"
               required>
             <mat-icon matSuffix>person</mat-icon>
-            <mat-error *ngIf="!user.Username">Username is required</mat-error>
+            <mat-error *ngIf="!editedUser.Username">Username is required</mat-error>
           </mat-form-field>
           
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
             <input 
               matInput 
-              [(ngModel)]="user.Email" 
+              [(ngModel)]="editedUser.Email" 
               name="Email" 
               type="email"
               required>
             <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="!user.Email">Email is required</mat-error>
+            <mat-error *ngIf="!editedUser.Email">Email is required</mat-error>
           </mat-form-field>
           
           <mat-form-field appearance="outline">
             <mat-label>Password (leave blank to keep current)</mat-label>
             <input 
               matInput 
-              [(ngModel)]="user.Password" 
+              [(ngModel)]="editedUser.Password" 
               name="Password" 
-              type="password">
+              type="password"
+              placeholder="Enter new password or leave blank">
             <mat-icon matSuffix>lock</mat-icon>
           </mat-form-field>
           
@@ -157,7 +158,7 @@
             <mat-label>Birthday</mat-label>
             <input 
               matInput 
-              [(ngModel)]="user.Birthday" 
+              [(ngModel)]="editedUser.Birthday" 
               name="Birthday" 
               type="date">
             <mat-icon matSuffix>cake</mat-icon>

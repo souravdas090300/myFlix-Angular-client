@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 export class UserProfileComponent implements OnInit {
   user: any = {};
   originalUser: any = {};
+  editedUser: any = {}; // Separate object for editing
   favoriteMovies: any[] = [];
   editMode = false;
   isLoading = true;
@@ -34,6 +35,13 @@ export class UserProfileComponent implements OnInit {
       try {
         this.user = JSON.parse(user);
         this.originalUser = { ...this.user };
+        // Initialize edit user without password
+        this.editedUser = { 
+          Username: this.user.Username,
+          Email: this.user.Email,
+          Birthday: this.user.Birthday,
+          Password: '' // Always start with empty password
+        };
         this.getFavoriteMovies();
       } catch (error) {
         console.error('Error parsing user data:', error);
@@ -73,18 +81,37 @@ export class UserProfileComponent implements OnInit {
   }
 
   updateUser(): void {
-    if (!this.user.Username || !this.user.Email) {
+    if (!this.editedUser.Username || !this.editedUser.Email) {
       this.snackBar.open('Username and Email are required', 'OK', {
         duration: 3000
       });
       return;
     }
 
-    this.fetchApiData.editUser(this.user).subscribe(
+    // Create update payload, only include password if it's not empty
+    const updatePayload: any = {
+      Username: this.editedUser.Username,
+      Email: this.editedUser.Email,
+      Birthday: this.editedUser.Birthday
+    };
+
+    // Only include password if user entered a new one
+    if (this.editedUser.Password && this.editedUser.Password.trim() !== '') {
+      updatePayload.Password = this.editedUser.Password;
+    }
+
+    this.fetchApiData.editUser(updatePayload).subscribe(
       (result) => {
         localStorage.setItem('user', JSON.stringify(result));
         this.user = result;
         this.originalUser = { ...result };
+        // Reset edited user with empty password
+        this.editedUser = { 
+          Username: result.Username,
+          Email: result.Email,
+          Birthday: result.Birthday,
+          Password: ''
+        };
         this.editMode = false;
         this.snackBar.open('Profile updated successfully!', 'OK', {
           duration: 2000
@@ -133,12 +160,25 @@ export class UserProfileComponent implements OnInit {
 
   toggleEditMode(): void {
     this.editMode = true;
+    // Reset editedUser with current user data but empty password
+    this.editedUser = { 
+      Username: this.user.Username,
+      Email: this.user.Email,
+      Birthday: this.user.Birthday,
+      Password: '' // Always start with empty password
+    };
     this.originalUser = { ...this.user };
   }
 
   cancelEdit(): void {
     this.editMode = false;
-    this.user = { ...this.originalUser };
+    // Reset editedUser
+    this.editedUser = { 
+      Username: this.user.Username,
+      Email: this.user.Email,
+      Birthday: this.user.Birthday,
+      Password: ''
+    };
   }
 
   formatBirthday(birthday: string): string {
