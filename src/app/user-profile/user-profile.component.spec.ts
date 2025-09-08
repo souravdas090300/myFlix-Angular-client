@@ -56,18 +56,22 @@ describe('UserProfileComponent', () => {
   });
 
   describe('updateUser', () => {
-    it('should show error when username or email is missing', () => {
+    it('should show error when username, email, or password is missing', () => {
       component.editedUser = { Username: '', Email: '', Birthday: '', Password: '' };
       
       component.updateUser();
       
-      expect(mockSnackBar.open).toHaveBeenCalledWith('Username and Email are required', 'OK', jasmine.any(Object));
+      expect(mockSnackBar.open).toHaveBeenCalledWith(
+        'Please fix the following errors:\n• Username is required\n• Email is required\n• Password field cannot be empty. Enter your current password or a new password.', 
+        'OK', 
+        jasmine.any(Object)
+      );
       expect(mockFetchApiData.editUser).not.toHaveBeenCalled();
     });
 
     it('should call API and update user when form is valid', () => {
-      const editedUserData = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01', Password: '' };
-      const expectedPayload = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01' };
+      const editedUserData = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01', Password: 'validpassword' };
+      const expectedPayload = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01', Password: 'validpassword' };
       const responseData = { Username: 'testuser', Email: 'test@example.com', Birthday: '1990-01-01' };
       
       component.editedUser = editedUserData;

@@ -16,6 +16,13 @@ export class UserProfileComponent implements OnInit {
   favoriteMovies: any[] = [];
   editMode = false;
   isLoading = true;
+  
+  // Validation flags
+  validationErrors: any = {
+    username: '',
+    email: '',
+    password: ''
+  };
 
   constructor(
     public fetchApiData: FetchApiDataService,
@@ -35,12 +42,12 @@ export class UserProfileComponent implements OnInit {
       try {
         this.user = JSON.parse(user);
         this.originalUser = { ...this.user };
-        // Initialize edit user without password
+        // Initialize edit user with proper default values
         this.editedUser = { 
           Username: this.user.Username,
           Email: this.user.Email,
-          Birthday: this.user.Birthday,
-          Password: '' // Always start with empty password
+          Birthday: this.formatDateForInput(this.user.Birthday), // Format birthday for input
+          Password: '' // Always start with empty password - user must enter old password or new password
         };
         this.getFavoriteMovies();
       } catch (error) {
@@ -81,35 +88,67 @@ export class UserProfileComponent implements OnInit {
   }
 
   updateUser(): void {
-    if (!this.editedUser.Username || !this.editedUser.Email) {
-      this.snackBar.open('Username and Email are required', 'OK', {
-        duration: 3000
+    // Clear previous validation errors
+    this.validationErrors = {
+      username: '',
+      email: '',
+      password: ''
+    };
+
+    let hasErrors = false;
+
+    // Validate Username
+    if (!this.editedUser.Username || this.editedUser.Username.trim() === '') {
+      this.validationErrors.username = 'Username is required';
+      hasErrors = true;
+    }
+
+    // Validate Email
+    if (!this.editedUser.Email || this.editedUser.Email.trim() === '') {
+      this.validationErrors.email = 'Email is required';
+      hasErrors = true;
+    } else if (!this.isValidEmail(this.editedUser.Email)) {
+      this.validationErrors.email = 'Email must be a valid email address';
+      hasErrors = true;
+    }
+
+    // Validate Password - REQUIRED (user must enter old password or new password)
+    if (!this.editedUser.Password || this.editedUser.Password.trim() === '') {
+      this.validationErrors.password = 'Password field cannot be empty. Enter your current password or a new password.';
+      hasErrors = true;
+    }
+
+    // If validation errors exist, show them and return
+    if (hasErrors) {
+      let errorMessage = 'Please fix the following errors:\n';
+      if (this.validationErrors.username) errorMessage += `• ${this.validationErrors.username}\n`;
+      if (this.validationErrors.email) errorMessage += `• ${this.validationErrors.email}\n`;
+      if (this.validationErrors.password) errorMessage += `• ${this.validationErrors.password}`;
+      
+      this.snackBar.open(errorMessage, 'OK', {
+        duration: 5000
       });
       return;
     }
 
-    // Create update payload, only include password if it's not empty
+    // Create update payload
     const updatePayload: any = {
-      Username: this.editedUser.Username,
-      Email: this.editedUser.Email,
-      Birthday: this.editedUser.Birthday
+      Username: this.editedUser.Username.trim(),
+      Email: this.editedUser.Email.trim(),
+      Birthday: this.editedUser.Birthday,
+      Password: this.editedUser.Password // Always include password as it's required
     };
-
-    // Only include password if user entered a new one
-    if (this.editedUser.Password && this.editedUser.Password.trim() !== '') {
-      updatePayload.Password = this.editedUser.Password;
-    }
 
     this.fetchApiData.editUser(updatePayload).subscribe(
       (result) => {
         localStorage.setItem('user', JSON.stringify(result));
         this.user = result;
         this.originalUser = { ...result };
-        // Reset edited user with empty password
+        // Reset edited user with empty password and formatted birthday
         this.editedUser = { 
           Username: result.Username,
           Email: result.Email,
-          Birthday: result.Birthday,
+          Birthday: this.formatDateForInput(result.Birthday),
           Password: ''
         };
         this.editMode = false;
@@ -160,36 +199,65 @@ export class UserProfileComponent implements OnInit {
 
   toggleEditMode(): void {
     this.editMode = true;
-    // Reset editedUser with current user data but empty password
+    // Reset validation errors when entering edit mode
+    this.validationErrors = {
+      username: '',
+      email: '',
+      password: ''
+    };
+    // Reset editedUser with current user data but empty password and formatted birthday
     this.editedUser = { 
       Username: this.user.Username,
       Email: this.user.Email,
-      Birthday: this.user.Birthday,
-      Password: '' // Always start with empty password
+      Birthday: this.formatDateForInput(this.user.Birthday),
+      Password: '' // Always start with empty password - user must enter current or new password
     };
     this.originalUser = { ...this.user };
   }
 
   cancelEdit(): void {
     this.editMode = false;
+    // Clear validation errors
+    this.validationErrors = {
+      username: '',
+      email: '',
+      password: ''
+    };
     // Reset editedUser
     this.editedUser = { 
       Username: this.user.Username,
       Email: this.user.Email,
-      Birthday: this.user.Birthday,
+      Birthday: this.formatDateForInput(this.user.Birthday),
       Password: ''
     };
   }
 
-  formatBirthday(birthday: string): string {
-    if (!birthday) return 'Not provided';
-    
+  // Helper method to validate email format
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  // Helper method to format date for HTML date input
+  formatDateForInput(dateString: string): string {
+    if (!dateString) return '';
     try {
-      const date = new Date(birthday);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
+    } catch {
+      return '';
+    }
+  }
+
+  // Helper method to format birthday for display
+  formatBirthday(dateString: string): string {
+    if (!dateString) return 'Not specified';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
       });
     } catch {
       return 'Invalid date';

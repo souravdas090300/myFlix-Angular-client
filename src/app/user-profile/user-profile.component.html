@@ -119,8 +119,9 @@
 
         <!-- Edit form -->
         <form class="profile-form" *ngIf="editMode && user && !isLoading">
+          <!-- Username field -->
           <mat-form-field appearance="outline">
-            <mat-label>Username</mat-label>
+            <mat-label>Username *</mat-label>
             <input 
               matInput 
               [(ngModel)]="editedUser.Username" 
@@ -128,11 +129,13 @@
               type="text"
               required>
             <mat-icon matSuffix>person</mat-icon>
-            <mat-error *ngIf="!editedUser.Username">Username is required</mat-error>
+            <mat-error *ngIf="validationErrors.username">{{ validationErrors.username }}</mat-error>
+            <mat-error *ngIf="!editedUser.Username && !validationErrors.username">Username is required</mat-error>
           </mat-form-field>
           
+          <!-- Email field -->
           <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
+            <mat-label>Email *</mat-label>
             <input 
               matInput 
               [(ngModel)]="editedUser.Email" 
@@ -140,20 +143,27 @@
               type="email"
               required>
             <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="!editedUser.Email">Email is required</mat-error>
+            <mat-error *ngIf="validationErrors.email">{{ validationErrors.email }}</mat-error>
+            <mat-error *ngIf="!editedUser.Email && !validationErrors.email">Email is required</mat-error>
           </mat-form-field>
           
+          <!-- Password field with clear instructions -->
           <mat-form-field appearance="outline">
-            <mat-label>Password (leave blank to keep current)</mat-label>
+            <mat-label>Password *</mat-label>
             <input 
               matInput 
               [(ngModel)]="editedUser.Password" 
               name="Password" 
               type="password"
-              placeholder="Enter new password or leave blank">
+              required
+              placeholder="Enter your current password or a new password">
             <mat-icon matSuffix>lock</mat-icon>
+            <mat-hint>Enter your current password to keep it, or enter a new password to change it</mat-hint>
+            <mat-error *ngIf="validationErrors.password">{{ validationErrors.password }}</mat-error>
+            <mat-error *ngIf="!editedUser.Password && !validationErrors.password">Password is required</mat-error>
           </mat-form-field>
           
+          <!-- Birthday field -->
           <mat-form-field appearance="outline">
             <mat-label>Birthday</mat-label>
             <input 
@@ -192,7 +202,6 @@
             mat-raised-button 
             color="primary" 
             (click)="updateUser()"
-            [disabled]="!user.Username || !user.Email"
             class="action-btn">
             <mat-icon>save</mat-icon>
             Save Changes
