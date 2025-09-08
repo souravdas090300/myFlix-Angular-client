@@ -30,6 +30,15 @@ import { DirectorDialogComponent } from './director-dialog/director-dialog.compo
 import { MovieDetailsDialogComponent } from './movie-details-dialog/movie-details-dialog.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 
+/** 
+ * Application routes configuration for the myFlix Angular client
+ * 
+ * Defines the main navigation structure of the application:
+ * - /welcome: Landing page with login/registration options
+ * - /movies: Main movie catalog view (requires authentication)
+ * - /profile: User profile management page (requires authentication)
+ * - Default and wildcard routes redirect to welcome page
+ */
 const appRoutes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
   { path: 'movies', component: MovieCardComponent },
@@ -38,6 +47,20 @@ const appRoutes: Routes = [
   { path: '**', redirectTo: 'welcome' }
 ];
 
+/**
+ * Main application module for the myFlix Angular client
+ * 
+ * This module configures the entire application including:
+ * - All component declarations
+ * - Angular Material UI components
+ * - HTTP client for API communication
+ * - Form handling modules
+ * - Routing configuration
+ * - Browser animations for Material Design
+ * 
+ * The module serves as the entry point for the Angular application
+ * and bootstraps the AppComponent as the root component.
+ */
 @NgModule({
   declarations: [
     AppComponent,

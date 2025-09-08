@@ -1,6 +1,36 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+/**
+ * Movie Details Dialog Component for displaying comprehensive movie information
+ * 
+ * This component renders a modal dialog that displays detailed information about
+ * a selected movie, including the movie poster, description, genre, director,
+ * and featured status. The dialog provides a responsive layout that adapts to
+ * different screen sizes.
+ * 
+ * Features:
+ * - Movie poster image display
+ * - Complete movie description
+ * - Genre and director information
+ * - Featured movie indicator
+ * - Responsive design for mobile devices
+ * 
+ * @example
+ * ```typescript
+ * this.dialog.open(MovieDetailsDialogComponent, {
+ *   data: {
+ *     Title: 'Inception',
+ *     Description: 'A mind-bending thriller...',
+ *     ImagePath: 'path/to/poster.jpg',
+ *     Genre: { Name: 'Sci-Fi' },
+ *     Director: { Name: 'Christopher Nolan' },
+ *     Featured: true
+ *   },
+ *   width: '600px'
+ * });
+ * ```
+ */
 @Component({
   selector: 'app-movie-details-dialog',
   standalone: false,
@@ -56,6 +86,11 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   `]
 })
 export class MovieDetailsDialogComponent {
+  /**
+   * Constructor for MovieDetailsDialogComponent
+   * 
+   * @param data - Movie data injected from parent component containing all movie details
+   */
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
