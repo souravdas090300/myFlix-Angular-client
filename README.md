@@ -225,7 +225,6 @@ This project is part of the CareerFoundry Full-Stack Web Development program and
 
 - **myFlix API**: Backend REST API for this application
 - **myFlix React Client**: React version of this application
-- **myFlix Vue Client**: Vue.js version of this application
 
 ---
 
