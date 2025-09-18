@@ -182,9 +182,12 @@ export class UserProfileComponent implements OnInit {
       hasErrors = true;
     }
 
-    // Validate Password - REQUIRED (user must enter old password or new password)
+    // Password REQUIRED: user must enter current or new password (API requires password)
     if (!this.editedUser.Password || this.editedUser.Password.trim() === '') {
-      this.validationErrors.password = 'Password field cannot be empty. Enter your current password or a new password.';
+      this.validationErrors.password = 'Password is required. Enter your current password or a new password.';
+      hasErrors = true;
+    } else if (this.editedUser.Password.trim().length < 4) {
+      this.validationErrors.password = 'Password must be at least 4 characters.';
       hasErrors = true;
     }
 
@@ -206,7 +209,7 @@ export class UserProfileComponent implements OnInit {
       Username: this.editedUser.Username.trim(),
       Email: this.editedUser.Email.trim(),
       Birthday: this.editedUser.Birthday,
-      Password: this.editedUser.Password // Always include password as it's required
+      Password: this.editedUser.Password.trim()
     };
 
     this.fetchApiData.editUser(updatePayload).subscribe(
