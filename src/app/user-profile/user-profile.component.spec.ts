@@ -62,7 +62,7 @@ describe('UserProfileComponent', () => {
       component.updateUser();
       
       expect(mockSnackBar.open).toHaveBeenCalledWith(
-        'Please fix the following errors:\n• Username is required\n• Email is required\n• Password field cannot be empty. Enter your current password or a new password.', 
+        'Please fix the following errors:\n• Username is required\n• Email is required\n• Password is required. Enter your current password or a new password.', 
         'OK', 
         jasmine.any(Object)
       );
