@@ -23,7 +23,25 @@ A single-page, responsive movie application built with Angular, showcasing movie
 - **Live Application**: [myFlix Angular Client](https://souravdas090300.github.io/myFlix-Angular-client/)
 - **API Documentation**: Available in the `docs/` folder after running TypeDoc
 
-## 🛠️ Built With
+## � Screenshots
+
+### Welcome Page
+![Welcome Page](public/Screenshot%202025-09-18%20215433.png)
+*Landing page with login and registration options*
+
+### Movie Catalog
+![Movie Catalog](public/Screenshot%202025-09-20%20191338.png)
+*Browse through the complete movie collection*
+
+### Movie Details
+![Movie Details](public/Screenshot%202025-09-20%20191421.png)
+*Detailed view of movie information including director and genre details*
+
+### User Profile
+![User Profile](public/Screenshot%202025-09-21%20214933.png)
+*User profile management with favorites and account settings*
+
+## �🛠️ Built With
 
 - **Frontend Framework**: Angular (v18+)
 - **UI Components**: Angular Material
