@@ -3,11 +3,10 @@ import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
-/** Base API URL for the myFlix backend service */
-const baseApiUrl = 'https://movie-flix-fb6c35ebba0a.herokuapp.com/';
-/** CORS proxy URL for GitHub Pages deployment */
-const corsProxy = 'https://corsproxy.io/?';
+/** Base API URL from Angular environment configuration */
+const baseApiUrl = environment.apiUrl;
 
 /**
  * Service for handling all API calls to the myFlix backend
@@ -26,31 +25,15 @@ export class FetchApiDataService {
   }
 
   /**
-   * Helper method to construct proper URL for both local and GitHub Pages environments
-   * Automatically adds CORS proxy when running on GitHub Pages
+   * Helper method to construct endpoint URLs from the configured base URL
    * 
    * @private
    * @param endpoint - The API endpoint to append to the base URL
    * @returns The complete URL for the API call
    */
   private constructUrl(endpoint: string): string {
-    const isGitHubPages = window.location.hostname.includes('github.io');
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    const finalUrl = isGitHubPages 
-      ? corsProxy + baseApiUrl + endpoint
-      : baseApiUrl + endpoint;
-    
-    console.log('Constructing URL:', {
-      hostname: window.location.hostname,
-      isGitHubPages,
-      isLocalhost,
-      endpoint,
-      baseApiUrl,
-      finalUrl
-    });
-    
-    return finalUrl;
+    const normalizedBase = baseApiUrl.endsWith('/') ? baseApiUrl : `${baseApiUrl}/`;
+    return `${normalizedBase}${endpoint}`;
   }
 
   /**
