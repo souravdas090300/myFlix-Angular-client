@@ -2,13 +2,14 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
+const browserDistPath = path.join(__dirname, 'dist', 'myFlix-Angular-client', 'browser');
 
-// Serve only the static files from the dist directory
-app.use(express.static(__dirname + '/dist/myFlix-Angular-client'));
+// Angular application builder outputs browser assets in this directory.
+app.use(express.static(browserDistPath));
 
-// For all GET requests, send back index.html so that PathLocationStrategy can be used
-app.get('/*', function(req, res) {
-  res.sendFile(path.join(__dirname + '/dist/myFlix-Angular-client/index.html'));
+// Express 5 requires a regex (or named wildcard) for a catch-all route.
+app.get(/.*/, function(req, res) {
+  res.sendFile(path.join(browserDistPath, 'index.html'));
 });
 
 // Start the app by listening on the default Heroku port
