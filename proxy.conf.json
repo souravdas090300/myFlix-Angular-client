@@ -1,6 +1,6 @@
 {
   "/api/*": {
-    "target": "https://movie-flix-fb6c35ebba0a.herokuapp.com",
+    "target": "https://ancient-woodland-05995-715624a89d87.herokuapp.com",
     "secure": true,
     "changeOrigin": true,
     "logLevel": "debug",

@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "start:dev": "ng serve --port 4200",
+    "start:dev": "ng serve --port 4200 --proxy-config proxy.conf.json",
     "dev": "ng serve --proxy-config proxy.conf.json",
     "dev-app": "ng serve --port 4200",
     "proxy": "node proxy-server.js",
